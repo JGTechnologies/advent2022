@@ -1,55 +1,36 @@
 use crate::helpers;
 use std::cmp::Reverse;
 
-struct Inventory {
-    calories: Vec<u32>,
-}
-
-impl Inventory {
-    fn total_calories(&self) -> u32 {
-        self.calories.iter().sum()
-    }
-}
-
-fn get_inputs() -> Vec<Inventory> {
+fn get_inputs() -> Vec<u32> {
     let inputs = helpers::read_inputs_file(1)
         .into_iter();
 
-    let mut inventories: Vec<Inventory> = vec![];
-    let mut inventory = Inventory { calories: vec![] };
+    let mut inventories: Vec<u32> = vec![];
+    let mut calories: u32 = 0;
 
     for line in inputs {
         if line.is_empty() {
-            inventories.push(inventory);
-            inventory = Inventory { calories: vec![] };
+            inventories.push(calories);
+            calories = 0;
 
             continue;
         }
 
-        inventory.calories.push(line.parse::<u32>().unwrap());
+        calories += line.parse::<u32>().unwrap();
     }
 
-    inventories.push(inventory);
+    inventories.push(calories);
     inventories
 }
 
 pub fn solve_part(part: u8) -> u32 {
     let mut inventories = get_inputs();
-    let mut max: u32 = 0;
 
-    for inventory in &inventories {
-        let total = inventory.total_calories();
-
-        if total > max {
-            max = total;
-        }
-    }
-
-    inventories.sort_by_key(|inventory| Reverse(inventory.total_calories()));
+    inventories.sort_by_key(|inventory| Reverse(*inventory));
 
     match part {
-        1 => inventories[0].total_calories(),
-        2 => inventories[0..3].iter().map(|inventory| inventory.total_calories()).sum(),
+        1 => inventories[0],
+        2 => inventories[0..3].iter().sum(),
         _ => panic!("Invalid part number"),
     }
 }
