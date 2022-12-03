@@ -105,21 +105,21 @@ fn get_rounds(part: u8) -> Vec<Round> {
                 match part {
                     1 => round.player = Moves::Rock,
                     2 => round.result = Result::Loss,
-                    _ => panic!("Invalied part number"),
+                    _ => panic!("Invalid part number"),
                 }
             },
             'Y' => {
                 match part {
                     1 => round.player = Moves::Paper,
                     2 => round.result = Result::Draw,
-                    _ => panic!("Invalied part number"),
+                    _ => panic!("Invalid part number"),
                 }
             },
             'Z' => {
                 match part {
                     1 => round.player = Moves::Scissors,
                     2 => round.result = Result::Win,
-                    _ => panic!("Invalied part number"),
+                    _ => panic!("Invalid part number"),
                 }
             },
             _ => panic!("Invalid input"),
