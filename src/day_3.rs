@@ -9,8 +9,8 @@ impl Rucksack {
   fn find_bad_items(&mut self) -> Vec<char> {
     let mut items: Vec<char> = vec![];
 
-    &self.first.sort();
-    &self.first.dedup();
+    self.first.sort();
+    self.first.dedup();
 
     for item in &self.first {
       if self.second.iter().any(|i| i == item) {
@@ -19,6 +19,28 @@ impl Rucksack {
     }
 
     items
+  }
+
+  fn all_items(&self) -> Vec<char> {
+    [self.first.clone(), self.second.clone()].concat()
+  }
+}
+
+struct Group<'a> {
+  first: &'a Rucksack,
+  second: &'a Rucksack,
+  third: &'a Rucksack,
+}
+
+impl Group<'_> {
+  fn get_shared_item(&self) -> char {
+    for item in &self.first.all_items() {
+      if self.second.all_items().iter().any(|i| i == item) && self.third.all_items().iter().any(|j| j == item) {
+        return *item;
+      }
+    }
+
+    panic!("No shared item found");
   }
 }
 
@@ -36,7 +58,7 @@ pub fn solve_part(part: u8) -> u32 {
   let mut total: u32 = 0;
   let mut rucksacks: Vec<Rucksack> = vec![];
 
-  for input in inputs {
+  for input in inputs.iter() {
     let length = input.chars().count();
 
     rucksacks.push(Rucksack {
@@ -55,7 +77,27 @@ pub fn solve_part(part: u8) -> u32 {
 
       total
     },
-    2 => panic!("Not yet built"),
+    2 => {
+      let mut i = 0;
+
+      loop {
+        if i >= inputs.len() {
+          break
+        }
+
+        let group = Group {
+          first: &rucksacks[i],
+          second: &rucksacks[i + 1],
+          third: &rucksacks[i + 2],
+        };
+
+        total += get_item_priority(group.get_shared_item());
+
+        i += 3;
+      }
+
+      total
+    }
     _ => panic!("Invalid part number"),
   }
 }
