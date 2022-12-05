@@ -16,26 +16,31 @@ fn build_vector_from_range(range: &str) -> Vec<u8> {
 
 pub fn solve_part(part: u8) -> u16 {
   let inputs = helpers::read_inputs_file(4);
+  let mut total: u16 = 0;
 
-  match part {
-    1 => {
-      let mut total: u16 = 0;
+  for input in inputs {
+    let splits = input.split(',').collect::<Vec<&str>>();
+    let first = build_vector_from_range(splits[0]);
+    let second = build_vector_from_range(splits[1]);
 
-      for input in inputs {
-        let mut splits = input.split(',').collect::<Vec<&str>>();
-        let first = build_vector_from_range(splits[0]);
-        let second = build_vector_from_range(splits[1]);
-        let mut combined = [first.clone(), second.clone()].concat();
-        combined.sort();
-        combined.dedup();
+    let mut combined = [first.clone(), second.clone()].concat();
+    combined.sort();
+    combined.dedup();
 
+    match part {
+      1 => {
         if combined.len() == first.len() || combined.len() == second.len() {
           total += 1;
         }
+      },
+      2 => {
+        if combined.len() != first.len() + second.len() {
+          total += 1;
+        }
       }
-
-      return total;
-    },
-    _ => panic!("Invalid part number"),
+      _ => panic!("Invalid part number"),
+    }
   }
+
+  total
 }
