@@ -7,15 +7,21 @@ pub fn solve_part(part: u8) -> usize {
   for i in 0..bytes.len() {
     let mut v = vec![];
 
-    for j in 0..4 {
+    let size = match part {
+      1 => 4,
+      2 => 14,
+      _ => panic!("Invalid part number"),
+    };
+
+    for j in 0..size {
       v.push(bytes[i + j]);
     }
 
     v.sort();
     v.dedup();
 
-    if v.len() == 4 {
-      return i + 4;
+    if v.len() == size {
+      return i + size;
     }
   }
 
