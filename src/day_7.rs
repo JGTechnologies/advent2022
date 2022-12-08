@@ -76,6 +76,13 @@ pub fn solve_part(part: u8) -> u32 {
     let mut path = "".to_string();
     let splits = dir.split("/");
 
+    if file.get_dir() == "/" {
+      tree.entry("/".to_string()).or_insert(0);
+      tree.entry("/".to_string()).and_modify(|v| *v += file.size);
+
+      continue;
+    }
+
     for split in splits {
       if split.len() == 0 {
         continue;
@@ -86,13 +93,28 @@ pub fn solve_part(part: u8) -> u32 {
       tree.entry(path.clone()).or_insert(0);
       tree.entry(path.clone()).and_modify(|v| *v += file.size);
     }
-  }
 
-  let mut result: u32 = 0;
+    tree.entry("/".to_string()).and_modify(|v| *v += file.size);
+  }
 
   match part {
     1 => tree.into_values().collect::<Vec<u32>>().iter().filter(|v| **v <= 100000).sum(),
-    2 => 0,
+    2 => {
+      let total_size = 70000000;
+      let needed_space = 30000000;
+      let total_used: u32 = *tree.get("/").unwrap();
+      let unused_space = total_size - total_used;
+      let amount_to_free = needed_space - unused_space;
+      let mut smallest = total_size;
+
+      for val in tree.values() {
+        if *val > amount_to_free && *val < smallest {
+          smallest = *val;
+        }
+      }
+
+      smallest
+    },
     _ => panic!("Invalid part number"),
   }
 }
