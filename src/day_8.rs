@@ -7,12 +7,92 @@ struct Tree {
 }
 
 impl Tree {
-  fn is_visible(&self, trees: &Vec<Vec<Tree>>) -> bool {
+  fn get_scenic_score(&self, trees: &Vec<Vec<Tree>>) -> u32 {
+    let mut score: u32 = 1;
+
+    if self.is_on_edge(&trees) {
+      return 0
+    }
+
+    // check left
+    let mut current_y = self.position_y - 1;
+    let mut counter: u32 = 0;
+
+    loop {
+      counter += 1;
+
+      if trees[self.position_x][current_y].height >= self.height || current_y == 0 {
+        break;
+      }
+
+      current_y -= 1;
+    }
+
+    score *= counter;
+    counter = 0;
+
+    // check right
+    current_y = self.position_y + 1;
+
+    while current_y < trees.len() {
+      counter += 1;
+
+      if trees[self.position_x][current_y].height >= self.height {
+        break;
+      }
+
+      current_y += 1;
+    }
+
+    score *= counter;
+    counter = 0;
+    
+    let mut current_x = self.position_x - 1;
+
+    // check up
+    loop {
+      counter += 1;
+
+      if trees[current_x][self.position_y].height >= self.height || current_x == 0 {
+        break;
+      }
+
+      current_x -= 1;
+    }
+
+    score *= counter;
+    counter = 0;
+
+    // check down
+    current_x = self.position_x + 1;
+
+    while current_x < trees[0].len() {
+      counter += 1;
+
+      if trees[current_x][self.position_y].height >= self.height {
+        break;
+      }
+
+      current_x += 1;
+    }
+
+    score * counter
+  }
+
+  fn is_on_edge(&self, trees: &Vec<Vec<Tree>>) -> bool {
     if self.position_x == 0 || self.position_x == trees.len() - 1 {
       return true;
     }
 
     if self.position_y == 0 || self.position_y == trees[0].len() -1 {
+      return true;
+    }
+
+    false
+  }
+
+  fn is_visible(&self, trees: &Vec<Vec<Tree>>) -> bool {
+    if self.is_on_edge(&trees) {
       return true;
     }
 
@@ -97,6 +177,21 @@ pub fn solve_part(part: u8) -> u32 {
       }));
 
       count
+    },
+    2 => {
+      let mut max_score: u32 = 0;
+
+      for row in &trees {
+        for tree in row {
+          let score = tree.get_scenic_score(&trees);
+
+          if score > max_score {
+            max_score = score;
+          }
+        }
+      }
+
+      max_score
     },
     _ => panic!("Invalid part number"),
   }
