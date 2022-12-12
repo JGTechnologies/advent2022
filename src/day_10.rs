@@ -42,8 +42,6 @@ pub fn solve_part(part: u8) -> u32 {
       value as u32
     },
     2 => {
-      let mut pixel: i32 = 0;
-
       for row in 0..6 {
         for col in 0..40 {
           let position = row * 40 + col;
@@ -54,8 +52,6 @@ pub fn solve_part(part: u8) -> u32 {
           } else {
             print!("{}", '.');
           }
-
-          pixel += 1;
         }
 
         println!("");
